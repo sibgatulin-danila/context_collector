@@ -9,8 +9,8 @@ if [ -z "$1" ]; then
   echo "Без аргументов — выполняю build и start..."
   docker build -t "$IMAGE_NAME" .
   docker run -it --rm \
-    -v "${PWD}:/app" \
-    -w /app \
+    -v "${PWD}:/context_collector" \
+    -w /context_collector \
     --name "$CONTAINER_NAME" \
     "$IMAGE_NAME"
 else
@@ -23,8 +23,8 @@ else
     start)
       echo "Запуск контейнера $CONTAINER_NAME..."
       docker run -it --rm \
-        -v "${PWD}:/app" \
-        -w /app \
+        -v "${PWD}:/context_collector" \
+        -w /context_collector \
         --name "$CONTAINER_NAME" \
         "$IMAGE_NAME"
       ;;
