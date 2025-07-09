@@ -1,8 +1,7 @@
 import argparse
 from pathlib import Path
 
-from utils import read_file_list
-from filters import filter_files
+from utils import read_file_list, filter_files, get_all_files
 
 
 def collect_context(include_path: Path = None, output_path: Path = None, exclude_path: Path = None):
@@ -17,7 +16,10 @@ def collect_context(include_path: Path = None, output_path: Path = None, exclude
         output_path = Path(f"context_{timestamp}.txt")
 
     print(f"[INFO] Считываем список включаемых путей {'(по умолчанию)' if include_path is None else ''}")
-    include_paths = read_file_list(include_path)
+    if include_path is None:
+        include_paths = get_all_files()
+    else:
+        include_paths = read_file_list(include_path)
 
     print("[INFO] Преобразуем пути к абсолютным")
     abs_include_paths = [Path(p).resolve() for p in include_paths]
@@ -79,3 +81,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
