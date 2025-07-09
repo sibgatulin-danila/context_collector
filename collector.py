@@ -5,21 +5,33 @@ from utils import read_file_list
 from filters import filter_files
 
 
-def collect_context(include_path: Path, output_path: Path, exclude_path: Path = None):
+def collect_context(include_path: Path = None, output_path: Path = None, exclude_path: Path = None):
     """
     Собирает контекст из указанных файлов и папок.
+    Если include_path не указан — берутся все файлы в текущей директории.
     """
-    print(f"[INFO] Считываем список включаемых путей из {include_path}")
+    # Автоматически генерируем имя выходного файла, если не задано
+    if output_path is None:
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = Path(f"context_{timestamp}.txt")
+
+    print(f"[INFO] Считываем список включаемых путей {'(по умолчанию)' if include_path is None else ''}")
     include_paths = read_file_list(include_path)
+
+    print("[INFO] Преобразуем пути к абсолютным")
+    abs_include_paths = [Path(p).resolve() for p in include_paths]
 
     print("[INFO] Сканируем файлы...")
     all_files = []
-    for path in include_paths:
-        p = Path(path)
-        if p.is_dir():
-            all_files.extend(p.rglob("*"))
-        elif p.is_file():
-            all_files.append(p)
+    for path in abs_include_paths:
+        if path.is_dir():
+            all_files.extend(path.rglob("*"))
+        elif path.is_file():
+            all_files.append(path)
+
+    # Убираем дубликаты
+    all_files = list(set(all_files))
 
     # Фильтруем по exclude, если указан
     if exclude_path:
