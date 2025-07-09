@@ -1,5 +1,6 @@
 from pathlib import Path
-from fnmatch import fnmatch
+from pathspec import PathSpec
+from pathspec.patterns import GitWildMatchPattern
 
 def read_file_list(path: Path) -> list[str]:
     """
@@ -17,18 +18,22 @@ def read_file_list(path: Path) -> list[str]:
 
 def filter_files(files: list[Path], patterns: list[str]) -> list[Path]:
     """
-    Фильтрует список файлов по шаблонам.
+    Фильтрует список файлов по шаблонам .gitignore с помощью pathspec.
+    Поддерживает все стандартные правила gitignore.
     """
-    result = []
+    spec = PathSpec.from_lines(GitWildMatchPattern, patterns)
+    # Преобразуем абсолютные пути в относительные (относительно текущей директории)
+    current_dir = Path.cwd()
+    filtered = []
     for file in files:
-        should_include = True
-        for pattern in patterns:
-            if fnmatch(str(file), pattern):
-                should_include = False
-                break
-        if should_include:
-            result.append(file)
-    return result
+        try:
+            rel_path = file.relative_to(current_dir)
+        except ValueError:
+            # Если файл вне текущей директории — оставляем его без изменений
+            rel_path = file
+        if not spec.match_file(rel_path):
+            filtered.append(file)
+    return filtered
 
 
 def get_all_files() -> list[str]:
