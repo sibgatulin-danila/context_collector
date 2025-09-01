@@ -1,10 +1,9 @@
-import argparse
 from pathlib import Path
 
-from utils import read_file_list, filter_files, get_all_files
+from context_collector.utils import read_file_list, filter_files, get_all_files
 
 
-def collect_context(include_path: Path = None, output_path: Path = None, exclude_path: Path = None):
+def build_context(include_path: Path = None, output_path: Path = None, exclude_path: Path = None):
     """
     Собирает контекст из указанных файлов и папок.
     Если include_path не указан — берутся все файлы в текущей директории.
@@ -53,32 +52,3 @@ def collect_context(include_path: Path = None, output_path: Path = None, exclude
                     f.write(f"[Ошибка чтения файла: {e}]")
 
     print(f"[SUCCESS] Контекст успешно записан в {output_path}")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Сборщик контекста для ИИ")
-    parser.add_argument("-i", "--include", type=Path, help="Файл со списком файлов/папок для включения", default=None)
-    parser.add_argument("-o", "--output", type=Path, help="Выходной файл контекста", default=None)
-    parser.add_argument("-e", "--exclude", type=Path, help="Файл со списком файлов/папок для исключения", default=None)
-
-    args = parser.parse_args()
-
-    if args.include and not args.include.exists():
-        print(f"[ERROR] Файл с включениями не найден: {args.include}")
-        return
-
-    if args.exclude and not args.exclude.exists():
-        print(f"[ERROR] Файл с исключениями не найден: {args.exclude}")
-        return
-
-    if args.output is None:
-        from datetime import datetime
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        args.output = Path(f"context_{timestamp}.txt")
-
-    collect_context(args.include, args.output, args.exclude)
-
-
-if __name__ == '__main__':
-    main()
-    

@@ -1,2 +1,2 @@
-utils.py
-collector.py
+context_collector/utils.py
+context_collector/core.py
