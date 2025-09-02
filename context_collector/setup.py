@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'context-collector=context_collector',
+            'context-collector=context_collector.cli:main',
         ],
     },
 )
