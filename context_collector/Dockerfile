@@ -23,20 +23,17 @@ RUN adduser \
 
 COPY . .
 
+
 # Устанавливаем venv и зависимости
 RUN python -m venv /venv && \
     /venv/bin/pip install --upgrade pip && \
     /venv/bin/pip install -r requirements.txt && \
-    /venv/bin/pip install -e .
+    /venv/bin/pip install -e context_collector
 
-# Делаем виртуальную среду доступной через PATH
 ENV PATH="/venv/bin:$PATH"
 
-# Переключаемся на непривилегированного пользователя
 USER appuser
 
-# Открываем порт
 EXPOSE 8008
 
-# Запускаем приложение
 CMD ["bash"]
