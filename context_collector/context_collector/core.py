@@ -45,7 +45,13 @@ def build_context(include_path: Path = None, output_path: Path = None, exclude_p
     with open(output_path, "w", encoding="utf-8") as f:
         for file in sorted(all_files):
             if file.is_file():
-                f.write(f"\n\n=== {file} ===\n")
+                try:
+                    rel_path = file.relative_to(Path.cwd())
+                except ValueError:
+                    # На всякий случай, если файл вне cwd (маловероятно)
+                    rel_path = file
+                f.write(f"=== {rel_path} ===")
+
                 try:
                     f.write(file.read_text(encoding="utf-8"))
                 except Exception as e:
