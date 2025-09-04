@@ -28,12 +28,10 @@ COPY . .
 RUN python -m venv /venv && \
     /venv/bin/pip install --upgrade pip && \
     /venv/bin/pip install -r requirements.txt && \
-    /venv/bin/pip install -e context_collector
+    /venv/bin/pip install -e .
 
 ENV PATH="/venv/bin:$PATH"
 
 USER appuser
 
-EXPOSE 8008
-
-CMD ["bash"]
+CMD ["context-collector"]

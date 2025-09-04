@@ -1,16 +1,15 @@
 #!/bin/bash
 
 # Имя контейнера и образа
-IMAGE_NAME="dev-python"
-CONTAINER_NAME="my-dev-container"
+IMAGE_NAME="context-collector-image"
+CONTAINER_NAME="context-collector-container"
 
 # Проверка на наличие аргумента
 if [ -z "$1" ]; then
   echo "Без аргументов — выполняю build и start..."
   docker build -t "$IMAGE_NAME" .
-  docker run -it --rm \
+  docker run --rm \
     -v "${PWD}:/context_collector" \
-    -w /context_collector \
     --name "$CONTAINER_NAME" \
     "$IMAGE_NAME"
 else
@@ -22,9 +21,8 @@ else
 
     start)
       echo "Запуск контейнера $CONTAINER_NAME..."
-      docker run -it --rm \
+      docker run --rm \
         -v "${PWD}:/context_collector" \
-        -w /context_collector \
         --name "$CONTAINER_NAME" \
         "$IMAGE_NAME"
       ;;

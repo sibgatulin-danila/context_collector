@@ -42,19 +42,24 @@ def build_context(include_path: Path = None, output_path: Path = None, exclude_p
 
     # Записываем в выходной файл
     print(f"[INFO] Записываем результат в {output_path}")
+    contents = []
+    for file in sorted(all_files):
+        if file.is_file():
+            try:
+                rel_path = file.relative_to(Path.cwd())
+            except ValueError:
+                # На всякий случай, если файл вне cwd (маловероятно)
+                rel_path = file
+            content = f"=== {rel_path} ===\n"
+
+            try:
+                content += file.read_text(encoding="utf-8")
+            except Exception as e:
+                content += f"[Ошибка чтения файла: {e}]"
+            
+            contents.append(content)
+
     with open(output_path, "w", encoding="utf-8") as f:
-        for file in sorted(all_files):
-            if file.is_file():
-                try:
-                    rel_path = file.relative_to(Path.cwd())
-                except ValueError:
-                    # На всякий случай, если файл вне cwd (маловероятно)
-                    rel_path = file
-                f.write(f"=== {rel_path} ===")
-
-                try:
-                    f.write(file.read_text(encoding="utf-8"))
-                except Exception as e:
-                    f.write(f"[Ошибка чтения файла: {e}]")
-
+        f.write('\n'.join(contents))
+        
     print(f"[SUCCESS] Контекст успешно записан в {output_path}")
