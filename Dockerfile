@@ -21,14 +21,12 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
-COPY . .
-
+RUN apt-get update && apt-get install -y git
 
 # Устанавливаем venv и зависимости
 RUN python -m venv /venv && \
     /venv/bin/pip install --upgrade pip && \
-    /venv/bin/pip install -r requirements.txt && \
-    /venv/bin/pip install -e .
+    /venv/bin/pip install git+https://github.com/sibgatulin-danila/context_collector
 
 ENV PATH="/venv/bin:$PATH"
 
